@@ -6,6 +6,7 @@
 #include "Server.h"
 
 using boost::asio::ip::tcp;
+
 char datas[1024];
 std::string make_daytime_string()
 {
