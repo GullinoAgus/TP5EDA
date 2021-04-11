@@ -6,11 +6,6 @@
 
 using namespace std;
 
-//  HACER UN PARSER PARA LO QUE RECIBIMOS (CHECKEAR QUE EL HOST ES MI IP) - el path - que termine en 2 CLRF, etc
-//  
-//  ENTRAR AL /PATH/FILENAME para devolver filenameLength y filenameContent
-//  
-
 void HTTP:: elaborateMessage() {
 
     int error = 0;  //Detecta cuando es momento de enviar el mensaje de error
@@ -27,7 +22,7 @@ void HTTP:: elaborateMessage() {
         
         if (!auxString.compare(string("GET"))) {    //Si el comando ingresado es GET...
 
-            
+            write_GET_message();
         }
         else if (!auxString.compare(string("VIVA-PERON"))) {    //Si el comando ingresado es VIVA-PERON...
 
@@ -102,7 +97,7 @@ void HTTP::write_GET_message() {
     int i = 0;
 
     string message = string("HTTP/1.1 200 OK \r\nDate: ");
-    message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
+    message.erase(message.length(), message.length()); //Borro el '\0' del final del string 
 
     time_t time_written = time(0);
     ctime_s(buffer, 100, &time_written);
