@@ -1,7 +1,7 @@
 #include "HTTP.h"
 
 #include <ctime>
-#include <iostream>
+
 #include <string>
 
 using namespace std;
@@ -11,7 +11,7 @@ using namespace std;
 //  ENTRAR AL /PATH/FILENAME para devolver filenameLength y filenameContent
 //  
 
-string write_ok_message() {
+string HTTP::write_ok_message() {
 
     char buffer[100];
     int i = 0;
@@ -46,7 +46,7 @@ string write_ok_message() {
     return message;
 }
 
-string write_error_message() {
+string HTTP::write_error_message() {
 
     char buffer[100];
     int i = 0;

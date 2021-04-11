@@ -3,7 +3,7 @@
 
 Server::Server(boost::asio::io_context& _ioContext)
 	:ioContext(_ioContext),
-	acceptor(_ioContext, tcp::endpoint(tcp::v4(), 45575))
+	acceptor(_ioContext, tcp::endpoint(tcp::v4(), 80))
 {
 	startListening();
 }
@@ -22,23 +22,16 @@ void Server::startListening()
 
 void Server::connectionHandler(Connection::pointer newConnection, const boost::system::error_code& error)
 {
-	this->startListening();
+	
 	if (!error)
 	{
-		int read = 0;
-		while (read != -1) {
-			std::string buffer;
-			read = newConnection->readData(buffer);
-			if (read > 0)
-			{
-				std::cout << read << std::endl;
-				std::cout << buffer << std::endl;
-				newConnection->sendData(buffer);
-			}
-			
-		}
+		newConnection->startHTTP(newConnection);
 	}
-	std::cerr << "err (recv): " << error.message() << std::endl;
+	else
+	{
+		std::cerr << "err (recv): " << error.message() << std::endl;
+	}
 
+	this->startListening();
 	
 }

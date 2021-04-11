@@ -19,28 +19,41 @@ tcp::socket& Connection::getSocket()
 }
 
 
-int Connection::readData(std::string& buffer)
+void Connection::startHTTP(Connection::pointer thisCon)
 {
-	int recievedBytes = 0;
+		boost::asio::async_read_until(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg), "\r\n\r\n",
+			boost::bind(&Connection::readDataHandler, this,
+				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error ));
 
-	try 
-	{
-		recievedBytes = boost::asio::read_until(this->getSocket(), boost::asio::dynamic_buffer(buffer), "\r\n\r\n");
-	}
-	catch(std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		recievedBytes = -1;
-	}
-	return recievedBytes;
 }
 
 
-void Connection::sendData(std::string& buffer)
+void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon, const boost::system::error_code& error)
+{
+	if (!error)
+	{
+		std::cout << recievedBytes << std::endl;
+		std::cout << this->receivedMsg << std::endl;
+		if (this->receivedMsg == std::string("quit\r\n\r\n"))
+		{
+			return;
+		}
+		this->receivedMsg = "";
+		startHTTP(thisCon);
+	}
+	else
+	{
+		std::cerr << error.message() << std::endl;
+	}
+	
+}
+
+
+void Connection::sendDataHandler(const boost::system::error_code& error)
 {
 	try
 	{
-		boost::asio::write(this->getSocket(), boost::asio::dynamic_buffer(buffer));
+		boost::asio::write(this->getSocket(), boost::asio::dynamic_buffer(this->toSendMsg));
 	}
 	catch (std::exception& e)
 	{
