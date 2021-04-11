@@ -13,5 +13,9 @@ public:
 protected:
 	std::string receivedMsg;
 	std::string toSendMsg;
+
+	std::string path;
+	std::string host;
+	std::string command;
 	
 };

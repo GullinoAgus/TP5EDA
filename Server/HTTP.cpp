@@ -5,8 +5,6 @@
 #include <string>
 #include <filesystem>
 
-static long long getFileSize(string abc);
-
 using namespace std;
 
 void HTTP:: elaborateMessage() {
@@ -41,9 +39,9 @@ void HTTP:: elaborateMessage() {
 
     auxPositionINICIAL = auxPositionFINAL + 1;
 
-    auxPositionFINAL = receivedMsg.find_first_of(' ', auxPositionFINAL + 1);   
+    auxPositionFINAL = receivedMsg.find_first_of(" ", auxPositionFINAL + 1);   
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL);
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL);
 
     if (!error) {   //LECTURA DEL PATH
 
@@ -201,21 +199,4 @@ void HTTP::write_error_message() {
     message += string("Content-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
 
     toSendMsg = message;
-}
-
-static long long getFileSize(string abc){
-    std::streampos fsize = 0;
-
-    std::ifstream myfile(abc, ios::in);  // File is of type const char*
-
-    fsize = myfile.tellg();         // The file pointer is currently at the beginning
-    myfile.seekg(0, ios::end);      // Place the file pointer at the end of file
-
-    fsize = myfile.tellg() - fsize;
-    myfile.close();
-
-    static_assert(sizeof(fsize) >= sizeof(long long), "Oops.");
-
-    cout << "size is: " << fsize << " bytes.\n";
-    return fsize;
 }
