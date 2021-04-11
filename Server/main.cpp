@@ -23,7 +23,13 @@ std::string make_daytime_string()
     return std::string(datas);
 }
 
-
+std::string _string()
+{
+    using namespace std; // For time_t, time and ctime;
+    time_t now = time(0);
+    ctime_s(datas, 1024, &now);
+    return std::string(datas);
+}
 
 
 class tcp_connection
