@@ -5,9 +5,10 @@ class HTTP {
 
 public:
 
-	std::string write_ok_message();
+	void write_GET_message();
+	void write_error_message();
 
-	std::string write_error_message();
+	void elaborateMessage();
 
 protected:
 	std::string receivedMsg;

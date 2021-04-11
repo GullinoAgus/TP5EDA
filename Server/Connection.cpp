@@ -32,14 +32,15 @@ void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon
 {
 	if (!error)
 	{
-		std::cout << recievedBytes << std::endl;
-		std::cout << this->receivedMsg << std::endl;
-		if (this->receivedMsg == std::string("quit\r\n\r\n"))
-		{
-			return;
-		}
-		
+		//std::cout << recievedBytes << std::endl;	
+		//std::cout << this->receivedMsg << std::endl;
+
+		elaborateMessage();	//Parseo la entrada de datos y creo una respuesta en toSendMesage
+
+		sendDataHandler(error);
+
 		this->receivedMsg = "";
+
 		startHTTP(thisCon);
 	}
 	else
