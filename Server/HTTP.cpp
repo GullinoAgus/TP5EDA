@@ -1,14 +1,19 @@
 #include "HTTP.h"
 
 #include <ctime>
-
+#include <fstream>
 #include <string>
+#include <filesystem>
+
+static long long getFileSize(string abc);
 
 using namespace std;
 
 void HTTP:: elaborateMessage() {
 
     int error = 0;  //Detecta cuando es momento de enviar el mensaje de error
+
+    ifstream file;
 
     string auxString; //String auxiliar con el que realizare los recortes
     int auxPositionINICIAL = 0;
@@ -42,7 +47,41 @@ void HTTP:: elaborateMessage() {
 
     if (!error) {   //LECTURA DEL PATH
 
-            //EN AUXSTRING ESTA EL PATH. LEELO
+        if (!auxString.compare(string("/"))) {
+
+            file.open("index.html");
+
+            if (file.failbit == 1) {
+
+                cout << "Error al intentar abrir el path" << endl;
+                write_error_message();
+                error = 1;
+            }
+
+            file >> auxString;
+
+            auxPositionINICIAL = receivedMsg.find_first_of("filenameContent", 0);
+            auxPositionFINAL = receivedMsg.find_first_of("\r\n\r\n", 0) - auxPositionINICIAL;
+
+            toSendMsg.replace(auxPositionINICIAL , auxPositionFINAL, auxString);    //Escribo todo el contenido
+
+            auxPositionINICIAL = receivedMsg.find_first_of("filenameLength", 0);
+
+            file.seekg(0, ios::end);
+            auxString = file.tellg();
+
+            toSendMsg.erase(auxPositionINICIAL, 13);
+
+            toSendMsg.replace(auxPositionINICIAL, auxPositionINICIAL + 1, auxString);   //Escribo el length
+
+            auxPositionINICIAL = receivedMsg.find_first_of("/path/filename", 0);
+
+            auxString = string("index.html");
+
+            toSendMsg.erase(auxPositionINICIAL, 13);
+
+            toSendMsg.replace(auxPositionINICIAL, auxPositionINICIAL + 1, auxString);   //Escribo el path
+        }
     }
 
     auxPositionINICIAL = auxPositionFINAL + 1;
@@ -52,9 +91,9 @@ void HTTP:: elaborateMessage() {
 
     auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - 1);
 
-    if (!error) {   //LECTURA DEL PATH
+    if (!error) {   //LECTURA de la version de HTTP
 
-            //EN AUXSTRING ESTA LA VERSION DE HTML si pinta hacer algo
+            //EN AUXSTRING ESTA LA VERSION DE HTPP si pinta hacer algo
     }
 
     auxPositionINICIAL = auxPositionFINAL + 2; //Me muevo al siguiente renglon
@@ -112,7 +151,6 @@ void HTTP::write_GET_message() {
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
     time_written += 30;
-    time_written = time(0);
     ctime_s(buffer, 100, &time_written);
 
     i = 0;
@@ -123,7 +161,7 @@ void HTTP::write_GET_message() {
         i++;
     }
 
-    message += string("\r\nContent - Length: filenameLength \r\nContent - Type : text / html; charset = iso - 8859 - 1 filenameContent\r\n\r\n");
+    message += string("Content - Length: filenameLength \r\nContent - Type : text / html; charset = iso - 8859 - 1 \r\nfilenameContent\r\n\r\n");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
     toSendMsg = message;
@@ -146,7 +184,7 @@ void HTTP::write_error_message() {
         i++;
     }
 
-    message += string("\r\nCache-Control: public, max-age=30 \r\nExpires: ");
+    message += string("Cache-Control: public, max-age=30 \r\nExpires: ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string  
 
     time_written += 30;
@@ -161,7 +199,24 @@ void HTTP::write_error_message() {
         i++;
     }
 
-    message += string("\r\nContent-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
+    message += string("Content-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
 
     toSendMsg = message;
+}
+
+static long long getFileSize(string abc){
+    std::streampos fsize = 0;
+
+    std::ifstream myfile(abc, ios::in);  // File is of type const char*
+
+    fsize = myfile.tellg();         // The file pointer is currently at the beginning
+    myfile.seekg(0, ios::end);      // Place the file pointer at the end of file
+
+    fsize = myfile.tellg() - fsize;
+    myfile.close();
+
+    static_assert(sizeof(fsize) >= sizeof(long long), "Oops.");
+
+    cout << "size is: " << fsize << " bytes.\n";
+    return fsize;
 }
