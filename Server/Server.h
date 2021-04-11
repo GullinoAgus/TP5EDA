@@ -1,6 +1,8 @@
 #pragma once
 #include "Connection.h"
 
+#define PORTNUM 80
+
 class Server
 {
 public:
