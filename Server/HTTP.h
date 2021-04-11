@@ -6,5 +6,5 @@ class HTTP {
 
 std::string write_ok_message();
 
-void write_error_message();
+std::string write_error_message();
 };
