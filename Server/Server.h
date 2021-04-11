@@ -5,16 +5,16 @@ class Server
 {
 public:
 
-	Server(boost::asio::io_context& ioContext);
+	Server(boost::asio::io_context& _ioContext);
 
 private:
 
 	void startListening();
 
-	//void connectionHandler(Connection::pointer newConnection);
+	void connectionHandler(Connection::pointer newConnection, const boost::system::error_code& error);
 
 
 	boost::asio::io_context& ioContext;
-	tcp::acceptor _acceptor;
+	tcp::acceptor acceptor;
 };
 
