@@ -15,7 +15,6 @@ private:
 
 	void connectionHandler(Connection::pointer newConnection, const boost::system::error_code& error);
 
-
 	boost::asio::io_context& ioContext;
 	tcp::acceptor acceptor;
 };
