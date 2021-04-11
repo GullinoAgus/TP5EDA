@@ -194,7 +194,6 @@ void HTTP::write_error_message() {
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string  
 
     time_written += 30;
-    time_written = time(0);
     ctime_s(buffer, 100, &time_written);
 
     i = 0;
