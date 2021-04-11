@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <fstream>
 #include "Server.h"
 
 using boost::asio::ip::tcp;
@@ -17,8 +18,7 @@ std::string make_daytime_string()
 }
 
 int main()
-{
-
+{    
     try
     {
         boost::asio::io_context io_context;

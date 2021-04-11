@@ -146,11 +146,10 @@ void HTTP::write_error_message() {
         i++;
     }
 
-    message += string("\r\nCache-Control: public, max-age=30 \r\nExpires: ");
+    message += string("Cache-Control: public, max-age=30 \r\nExpires: ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string  
 
     time_written += 30;
-    time_written = time(0);
     ctime_s(buffer, 100, &time_written);
 
     i = 0;
@@ -161,7 +160,7 @@ void HTTP::write_error_message() {
         i++;
     }
 
-    message += string("\r\nContent-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
+    message += string("Content-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
 
     toSendMsg = message;
 }

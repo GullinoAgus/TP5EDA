@@ -53,12 +53,12 @@ void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon
 
 void Connection::sendDataHandler(const boost::system::error_code& error)
 {
-	/*try
+	try
 	{
 		boost::asio::write(this->getSocket(), boost::asio::dynamic_buffer(this->toSendMsg));
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-	}*/
+	}
 }
