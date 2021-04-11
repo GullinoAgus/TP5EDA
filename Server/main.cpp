@@ -72,20 +72,24 @@ class tcp_server
 public:
     tcp_server(boost::asio::io_context& io_context)
         : io_context_(io_context),
-        acceptor_(io_context, tcp::endpoint(tcp::v4(), 80))
+        acceptor_(io_context, tcp::endpoint(tcp::v4(), 45575))
     {
         
         start_accept();
     }
 
     static void handle_read(const boost::system::error_code& err,
-        size_t bytes_transferred, char data[1024])
+        size_t bytes_transferred, tcp_connection::pointer Connection, char data[1024])
     {
         if (!err) {
             std::cout << data << std::endl;
-
-
-
+            Connection->socket().async_read_some(
+                boost::asio::buffer(data, 1024),
+                boost::bind(&handle_read,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred,
+                    Connection,
+                    data));
         }
         else {
             std::cerr << "err (recv): " << err.message() << std::endl;       }
@@ -116,8 +120,10 @@ private:
                 boost::bind(&handle_read,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred,
+                    newConnection,
                     data));
-            //newConnection->start();
+            newConnection->start();
+
         }
         std::cerr << "err (recv): " << error.message() << std::endl;
         start_accept();
