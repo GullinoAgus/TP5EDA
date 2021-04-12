@@ -18,7 +18,8 @@ std::string make_daytime_string()
 }
 
 int main()
-{    
+{
+
     try
     {
         boost::asio::io_context io_context;

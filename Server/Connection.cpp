@@ -41,7 +41,7 @@ void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon
 
 		this->receivedMsg = "";
 
-		startHTTP(thisCon);
+		//startHTTP(thisCon);
 	}
 	else
 	{

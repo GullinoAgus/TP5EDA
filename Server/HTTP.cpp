@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include <sstream>
 
 using namespace std;
 
@@ -16,8 +17,9 @@ void HTTP:: elaborateMessage() {
     string auxString; //String auxiliar con el que realizare los recortes
     int auxPositionINICIAL = 0;
     int auxPositionFINAL;
+    int auxPositionFINALHOLDER;
 
-    auxPositionFINAL = receivedMsg.find_first_of(' ', 0 );   //Busco el primer espacio desde el inicio del string
+    auxPositionFINAL = receivedMsg.find(' ', 0 );   //Busco el primer espacio desde el inicio del string
 
     auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL);
 
@@ -39,9 +41,11 @@ void HTTP:: elaborateMessage() {
 
     auxPositionINICIAL = auxPositionFINAL + 1;
 
-    auxPositionFINAL = receivedMsg.find_first_of(" ", auxPositionFINAL + 1);   
+    auxPositionFINAL = receivedMsg.find(' ', auxPositionFINAL + 1);
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL);
+    auxPositionFINALHOLDER = auxPositionFINAL;
+
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL-auxPositionINICIAL);
 
     if (!error) {   //LECTURA DEL PATH
 
@@ -56,38 +60,42 @@ void HTTP:: elaborateMessage() {
                 error = 1;
             }
 
-            file >> auxString;
+            std::stringstream strStream;
+            strStream << file.rdbuf(); //read the file
 
-            auxPositionINICIAL = receivedMsg.find_first_of("filenameContent", 0);
-            auxPositionFINAL = receivedMsg.find_first_of("\r\n\r\n", 0) - auxPositionINICIAL;
+            auxString = strStream.str(); //str holds the content of the file
+
+            auxPositionINICIAL = toSendMsg.find(string("filenameContent"), 0);
+            auxPositionFINAL = toSendMsg.find(string("\r\n\r\n"), 0) - auxPositionINICIAL;
 
             toSendMsg.replace(auxPositionINICIAL , auxPositionFINAL, auxString);    //Escribo todo el contenido
 
-            auxPositionINICIAL = receivedMsg.find_first_of("filenameLength", 0);
+            auxPositionINICIAL = toSendMsg.find("filenameLength", 0);
 
-            file.seekg(0, ios::end);
-            auxString = file.tellg();
+            //busquemos alguna forma de calcular la cantidad de bytes que pesa el archivo
 
-            toSendMsg.erase(auxPositionINICIAL, 13);
-
-            toSendMsg.replace(auxPositionINICIAL, auxPositionINICIAL + 1, auxString);   //Escribo el length
-
-            auxPositionINICIAL = receivedMsg.find_first_of("/path/filename", 0);
-
-            auxString = string("index.html");
+            auxString = string("593");
 
             toSendMsg.erase(auxPositionINICIAL, 13);
 
-            toSendMsg.replace(auxPositionINICIAL, auxPositionINICIAL + 1, auxString);   //Escribo el path
+            toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el length
+
+            auxPositionINICIAL = toSendMsg.find("/path/filename", 0);
+
+            auxString = string("/index.html");
+
+            toSendMsg.erase(auxPositionINICIAL, 13);
+
+            toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el path
         }
     }
 
-    auxPositionINICIAL = auxPositionFINAL + 1;
+    auxPositionINICIAL = auxPositionFINALHOLDER + 1;
 
-    auxPositionFINAL = receivedMsg.find_first_of(1310, auxPositionFINAL + 1); //OJO, PORQUE ENGANCHO UN ' ' TAMBIEN
-                                                                               //CON 1310 estaria chequeando el \r\n, ver si funca
+    auxPositionFINAL = receivedMsg.find(string("\r\n"), 0);    //OJO, PORQUE ENGANCHO UN ' ' TAMBIEN
+                                                               //CON 1310 estaria chequeando el \r\n, ver si funca
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - 1);
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL - 1);
 
     if (!error) {   //LECTURA de la version de HTTP
 
@@ -96,9 +104,9 @@ void HTTP:: elaborateMessage() {
 
     auxPositionINICIAL = auxPositionFINAL + 2; //Me muevo al siguiente renglon
 
-    auxPositionFINAL = receivedMsg.find_first_of(' ', auxPositionFINAL );
+    auxPositionFINAL = receivedMsg.find(' ', auxPositionFINAL );
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL );
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL );
 
     if (!error) {
 
@@ -106,7 +114,7 @@ void HTTP:: elaborateMessage() {
 
             auxPositionINICIAL = auxPositionFINAL + 1;
 
-            auxPositionFINAL = receivedMsg.find_first_of(1310, auxPositionFINAL + 1);
+            auxPositionFINAL = receivedMsg.find(string("\r\n"), auxPositionFINAL + 1);
 
             auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL -1);    //quito el ' ' del final tambien
 
@@ -116,7 +124,7 @@ void HTTP:: elaborateMessage() {
 
     auxPositionINICIAL = auxPositionFINAL + 2; //Me muevo al siguiente renglon
 
-    auxPositionFINAL = receivedMsg.find_first_of(13101310, auxPositionFINAL);   //Busco el \r\n\r\n
+    auxPositionFINAL = receivedMsg.find(string("\r\n\r\n"), auxPositionFINAL);   //Busco el \r\n\r\n
 
     if (auxPositionFINAL == -1) {   //no encontro el \r\n\r\n
 
@@ -139,13 +147,13 @@ void HTTP::write_GET_message() {
     time_t time_written = time(0);
     ctime_s(buffer, 100, &time_written);
 
-    while (buffer[i] != '\0') {
+    while (buffer[i] != '\n') {
 
         message.push_back(buffer[i]);
         i++;
     }
 
-    message += string("Location: 127.0.0.1/path/filename \r\nCache - Control: max - age = 30 \r\nExpires : ");
+    message += string("\r\nLocation: 127.0.0.1/path/filename \r\nCache - Control: max - age = 30 \r\nExpires : ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
     time_written += 30;
@@ -153,13 +161,13 @@ void HTTP::write_GET_message() {
 
     i = 0;
 
-    while (buffer[i] != '\0') {
+    while (buffer[i] != '\n') {
 
         message.push_back(buffer[i]);
         i++;
     }
 
-    message += string("Content - Length: filenameLength \r\nContent - Type : text / html; charset = iso - 8859 - 1 \r\nfilenameContent\r\n\r\n");
+    message += string("\r\nContent - Length: filenameLength \r\nContent - Type : text / html; charset = iso - 8859 - 1 \r\n\nfilenameContent\r\n\r\n");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
     toSendMsg = message;
@@ -176,13 +184,13 @@ void HTTP::write_error_message() {
     time_t time_written = time(0);
     ctime_s(buffer, 100, &time_written);
 
-    while (buffer[i] != '\0') {
+    while (buffer[i] != '\n') {
 
         message.push_back(buffer[i]);
         i++;
     }
 
-    message += string("Cache-Control: public, max-age=30 \r\nExpires: ");
+    message += string("\r\nCache-Control: public, max-age=30 \r\nExpires: ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string  
 
     time_written += 30;
@@ -190,13 +198,13 @@ void HTTP::write_error_message() {
 
     i = 0;
 
-    while (buffer[i] != '\0') {
+    while (buffer[i] != '\n') {
 
         message.push_back(buffer[i]);
         i++;
     }
 
-    message += string("Content-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
+    message += string("\r\nContent-Length: 0 \r\nContent - Type: text / html; charset = iso - 8859 - 1 \r\n\r\n");
 
     toSendMsg = message;
 }
