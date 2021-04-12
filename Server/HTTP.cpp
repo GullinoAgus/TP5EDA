@@ -27,6 +27,7 @@ void HTTP:: elaborateMessage() {
         
         if (!auxString.compare(string("GET"))) {    //Si el comando ingresado es GET...
 
+            command = auxString;
             write_GET_message();
         }
         else if (!auxString.compare(string("VIVA-PERON"))) {    //Si el comando ingresado es VIVA-PERON...
@@ -48,6 +49,8 @@ void HTTP:: elaborateMessage() {
     auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL-auxPositionINICIAL);
 
     if (!error) {   //LECTURA DEL PATH
+
+        path = auxString;
 
         if (!auxString.compare(string("/"))) {
 
@@ -87,11 +90,9 @@ void HTTP:: elaborateMessage() {
 
         auxPositionINICIAL = toSendMsg.find("/path/filename", 0);
 
-        auxString = string("/index.html");
-
         toSendMsg.erase(auxPositionINICIAL, 13);
 
-        toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el path
+        toSendMsg.replace(auxPositionINICIAL, 1, path);   //Escribo el path
 
         file.close();
         
@@ -125,6 +126,7 @@ void HTTP:: elaborateMessage() {
             auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL);    //quito el ' ' del final tambien
 
             //en AUXString esta escrito el host:
+            host = auxString;
         }
     }
 
