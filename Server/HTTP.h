@@ -7,7 +7,6 @@ public:
 
 	void write_GET_message();
 	void write_error_message();
-
 	void elaborateMessage();
 
 protected:
