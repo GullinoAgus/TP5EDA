@@ -3,8 +3,9 @@
 #include <ctime>
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <boost/filesystem.hpp>
 #include <sstream>
+#include "mime_types.h"
 
 using namespace std;
 
@@ -57,7 +58,8 @@ void HTTP:: elaborateMessage() {
 
             auxString.erase(0, 1);  //Borro la primera barra /
         }
-
+        
+        
         file.open(auxString);
 
         if (file.failbit == 1) {
@@ -66,8 +68,13 @@ void HTTP:: elaborateMessage() {
             write_error_message();
             error = 1;
         }
+        boost::filesystem::path path(auxString);
+        cout << http::server::mime_types::extension_to_type(boost::filesystem::extension(path)) << endl;
 
-        std::stringstream strStream;
+        auxPositionINICIAL = toSendMsg.find(string("text / html"), 0);
+        toSendMsg.replace(auxPositionINICIAL, string("text / html").length(), http::server::mime_types::extension_to_type(boost::filesystem::extension(path)));
+
+        stringstream strStream;
         strStream << file.rdbuf(); //read the file
 
         auxString = strStream.str(); //str holds the content of the file
@@ -163,7 +170,7 @@ void HTTP::write_GET_message() {
         i++;
     }
 
-    message += string("\r\nLocation: 127.0.0.1/path/filename \r\nCache - Control: max - age = 30 \r\nExpires : ");
+    message += string("\r\nLocation: 127.0.0.1/path/filename \r\nCache-Control: max-age = 30 \r\nExpires : ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
     rawtime += 30;
@@ -179,8 +186,8 @@ void HTTP::write_GET_message() {
         i++;
     }
 
-    message += string("\r\nContent - Length: filenameLength \r\nContent - Type : text / html; charset = iso - 8859 - 1 \r\n\nfilenameContent\r\n\r\n");
-    message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
+    message += string("\r\nContent-Length: filenameLength \r\nContent-Type: text / html\r\n\nfilenameContent\r\n\r\n");
+    message.erase(message.length(), message.length()); //Borro el '\0\ del final del string     ; charset = iso - 8859 - 1
 
     toSendMsg = message;
 }
