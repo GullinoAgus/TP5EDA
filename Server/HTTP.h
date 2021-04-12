@@ -2,13 +2,6 @@
 #include <iostream>
 
 class HTTP {
-
-public:
-
-	void write_GET_message();
-	void write_error_message();
-	void elaborateMessage();
-
 protected:
 	std::string receivedMsg;
 	std::string toSendMsg;
@@ -16,5 +9,8 @@ protected:
 	std::string path;
 	std::string host;
 	std::string command;
-	
+
+	void write_GET_message();
+	void write_error_message();
+	void elaborateMessage();
 };

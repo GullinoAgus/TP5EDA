@@ -1,6 +1,13 @@
 #include "Connection.h"
 
 
+Connection::~Connection()
+{
+#ifdef DEBUG
+	std::cerr << "Connection closed." << std::endl;
+#endif // DEBUG
+}
+
 Connection::Connection(boost::asio::io_context& ioContext)
 	: conSocket(ioContext)
 {
@@ -21,12 +28,9 @@ tcp::socket& Connection::getSocket()
 
 void Connection::startHTTP(Connection::pointer thisCon)
 {
-		/*boost::asio::async_read_until(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg), "\r\n\r\n",
+		boost::asio::async_read_until(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg), "\r\n\r\n",
 			boost::bind(&Connection::readDataHandler, this,
-				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error ));*/
-		boost::asio::async_read(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg),
-			boost::bind(&Connection::readDataHandler, this,
-				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error));
+				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error ));
 }
 
 
@@ -34,16 +38,19 @@ void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon
 {
 	if (!error)
 	{
-		//std::cout << recievedBytes << std::endl;	
-		//std::cout << this->receivedMsg << std::endl;
 
 		elaborateMessage();	//Parseo la entrada de datos y creo una respuesta en toSendMesage
 
-		sendDataHandler(error);
+		boost::asio::async_write(this->conSocket, boost::asio::dynamic_buffer(this->toSendMsg),
+			boost::bind(&Connection::sendDataHandler, this,
+				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error));
 
+#ifdef DEBUGHTTP
+		std::cout << "Received request:" << std::endl << this->receivedMsg << std::endl << std::endl;
+		std::cout << "Sent response:" << std::endl << this->toSendMsg << std::endl;
+#endif // DEBUGHTTP
 		this->receivedMsg = "";
 
-		//startHTTP(thisCon);
 	}
 	else
 	{
@@ -53,14 +60,12 @@ void Connection::readDataHandler( int recievedBytes, Connection::pointer thisCon
 }
 
 
-void Connection::sendDataHandler(const boost::system::error_code& error)
+void Connection::sendDataHandler(int sentBytes, Connection::pointer thisCon, const boost::system::error_code& error)
 {
-	try
+	if (error)
 	{
-		boost::asio::write(this->getSocket(), boost::asio::dynamic_buffer(this->toSendMsg));
+		std::cerr << "Error ocurred while writting: " << error.message() << std::endl;
 	}
-	catch (std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
+
+	this->conSocket.close();
 }

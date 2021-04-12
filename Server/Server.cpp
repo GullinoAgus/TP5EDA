@@ -27,11 +27,10 @@ void Server::connectionHandler(Connection::pointer newConnection, const boost::s
 	{
 		newConnection->startHTTP(newConnection);
 	}
-	else
-	{
-		std::cerr << "err (recv): " << error.message() << std::endl;
-	}
-	std::cerr << "err (recv): " << error.message() << std::endl;
+#ifdef DEBUG
+		std::cerr << "Connection error ocurred: " << error.message() << std::endl;
+#endif // DEBUG
+
 	this->startListening();
 	
 }

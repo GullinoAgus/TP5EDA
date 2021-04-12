@@ -63,7 +63,7 @@ void HTTP:: elaborateMessage() {
         }
         
         
-        file.open(auxString);
+        file.open(auxString, ios::in | ios::binary);
 
         if (file.failbit == 1) {
 
