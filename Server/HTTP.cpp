@@ -87,6 +87,8 @@ void HTTP:: elaborateMessage() {
             toSendMsg.erase(auxPositionINICIAL, 13);
 
             toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el path
+
+            file.close();
         }
     }
 
