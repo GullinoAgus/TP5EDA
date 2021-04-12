@@ -51,51 +51,57 @@ void HTTP:: elaborateMessage() {
 
         if (!auxString.compare(string("/"))) {
 
-            file.open("index.html");
-
-            if (file.failbit == 1) {
-
-                cout << "Error al intentar abrir el path" << endl;
-                write_error_message();
-                error = 1;
-            }
-
-            std::stringstream strStream;
-            strStream << file.rdbuf(); //read the file
-
-            auxString = strStream.str(); //str holds the content of the file
-
-            auxPositionINICIAL = toSendMsg.find(string("filenameContent"), 0);
-            auxPositionFINAL = toSendMsg.find(string("\r\n\r\n"), 0) - auxPositionINICIAL;
-
-            toSendMsg.replace(auxPositionINICIAL , auxPositionFINAL, auxString);    //Escribo todo el contenido
-
-            auxPositionINICIAL = toSendMsg.find("filenameLength", 0);
-
-            auxString = to_string(auxString.size());
-
-            toSendMsg.erase(auxPositionINICIAL, 13);
-
-            toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el length
-
-            auxPositionINICIAL = toSendMsg.find("/path/filename", 0);
-
-            auxString = string("/index.html");
-
-            toSendMsg.erase(auxPositionINICIAL, 13);
-
-            toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el path
-
-            file.close();
+            auxString = string("index.html");
         }
+        else {
+
+            auxString.erase(0, 1);  //Borro la primera barra /
+        }
+
+        file.open(auxString);
+
+        if (file.failbit == 1) {
+
+            cout << "Error al intentar abrir el path" << endl;
+            write_error_message();
+            error = 1;
+        }
+
+        std::stringstream strStream;
+        strStream << file.rdbuf(); //read the file
+
+        auxString = strStream.str(); //str holds the content of the file
+
+        auxPositionINICIAL = toSendMsg.find(string("filenameContent"), 0);
+        auxPositionFINAL = toSendMsg.find(string("\r\n\r\n"), 0) - auxPositionINICIAL;
+
+        toSendMsg.replace(auxPositionINICIAL , auxPositionFINAL, auxString);    //Escribo todo el contenido
+
+        auxPositionINICIAL = toSendMsg.find("filenameLength", 0);
+
+        auxString = to_string(auxString.size());
+
+        toSendMsg.erase(auxPositionINICIAL, 13);
+
+        toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el length
+
+        auxPositionINICIAL = toSendMsg.find("/path/filename", 0);
+
+        auxString = string("/index.html");
+
+        toSendMsg.erase(auxPositionINICIAL, 13);
+
+        toSendMsg.replace(auxPositionINICIAL, 1, auxString);   //Escribo el path
+
+        file.close();
+        
     }
 
     auxPositionINICIAL = auxPositionFINALHOLDER + 1;
 
-    auxPositionFINAL = receivedMsg.find(string("\r\n"), 0);    //OJO, PORQUE ENGANCHO UN ' ' TAMBIEN
-                                                               //CON 1310 estaria chequeando el \r\n, ver si funca
+    auxPositionFINAL = receivedMsg.find(string("\r\n"), 0);    
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL - 1);
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL);
 
     if (!error) {   //LECTURA de la version de HTTP
 
@@ -116,7 +122,7 @@ void HTTP:: elaborateMessage() {
 
             auxPositionFINAL = receivedMsg.find(string("\r\n"), auxPositionFINAL + 1);
 
-            auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL -1);    //quito el ' ' del final tambien
+            auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL);    //quito el ' ' del final tambien
 
             //en AUXString esta escrito el host:
         }
@@ -132,7 +138,7 @@ void HTTP:: elaborateMessage() {
         write_error_message();
     }
 
-    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL); //ACA ESTA EL RESTO DEL STRING, si sirve de algo
+    auxString = receivedMsg.substr(auxPositionINICIAL, auxPositionFINAL - auxPositionINICIAL); //ACA ESTA EL RESTO DEL STRING, si sirve de algo
 }
 
 
@@ -141,13 +147,17 @@ void HTTP::write_GET_message() {
     char buffer[100];
     int i = 0;
 
+    time_t rawtime = time(0);
+    struct tm timeinfo;
+
     string message = string("HTTP/1.1 200 OK \r\nDate: ");
     message.erase(message.length(), message.length()); //Borro el '\0' del final del string 
 
-    time_t time_written = time(0);
-    ctime_s(buffer, 100, &time_written);
+    localtime_s(&timeinfo, &rawtime);
 
-    while (buffer[i] != '\n') {
+    strftime(buffer, 100, "%a, %e %b %G %T GMT", &timeinfo);
+
+    while (buffer[i] != '\0') {
 
         message.push_back(buffer[i]);
         i++;
@@ -156,12 +166,14 @@ void HTTP::write_GET_message() {
     message += string("\r\nLocation: 127.0.0.1/path/filename \r\nCache - Control: max - age = 30 \r\nExpires : ");
     message.erase(message.length(), message.length()); //Borro el '\0\ del final del string 
 
-    time_written += 30;
-    ctime_s(buffer, 100, &time_written);
+    rawtime += 30;
+    localtime_s(&timeinfo , &rawtime);
+
+    strftime(buffer, 100, "%a, %e %b %G %T GMT", &timeinfo);
 
     i = 0;
 
-    while (buffer[i] != '\n') {
+    while (buffer[i] != '\0') {
 
         message.push_back(buffer[i]);
         i++;
