@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['destroyalltimers_153',['destroyAllTimers',['../times_8h.html#adcec8e0f603bdf220afe18e58a473f86',1,'times.c']]],
+  ['destroyentities_154',['destroyEntities',['../level_8h.html#a99dbce369c7c427a94cbbe5a8939c639',1,'level.c']]],
+  ['destroymap_155',['destroyMap',['../level_8h.html#af13da16831245c06cf45e63c6ecfa145',1,'level.c']]],
+  ['destroymenu_156',['destroyMenu',['../menu_8h.html#a7f12c363cb08f3ff7ecf6d4cb018d28d',1,'menu.c']]],
+  ['destroyresources_157',['destroyResources',['../allegro_lib_8h.html#af12a0be13d1ef5b43cbac4842e76aae5',1,'allegroLib.c']]],
+  ['disp_5fclear_158',['disp_clear',['../disdrv_8h.html#a9ee74048005b46329aa778fa55fddb06',1,'disdrv.h']]],
+  ['disp_5finit_159',['disp_init',['../disdrv_8h.html#ac2bff3cdc84df7de0365c6ddfa40dca5',1,'disdrv.h']]],
+  ['disp_5fupdate_160',['disp_update',['../disdrv_8h.html#a91791a33754803647107d1de34f87942',1,'disdrv.h']]],
+  ['disp_5fwrite_161',['disp_write',['../disdrv_8h.html#a095e22e0e08d78d3aa06476283982da4',1,'disdrv.h']]],
+  ['drawgameoverscreen_162',['drawGameOverScreen',['../level_8h.html#a2fac77590be6c07381aedc2d149512b4',1,'level.c']]],
+  ['drawlevel_163',['drawLevel',['../level_8h.html#a57ddf2d57165562f165affb36c067843',1,'level.c']]],
+  ['drawlevelselector_164',['drawLevelSelector',['../menu_8h.html#a64070d204b0e13aff8b3ea284ae08a3c',1,'menu.c']]],
+  ['drawmenu_165',['drawMenu',['../menu_8h.html#aa7ecb523994f570fd3303542c8f1e98e',1,'menu.c']]],
+  ['drawnextlevelscreen_166',['drawNextLevelScreen',['../level_8h.html#a0f05288bc16a5ce70412b098e698030c',1,'level.c']]],
+  ['drawpause_167',['drawPause',['../level_8h.html#aa64e1088840f059f5f3e234e9ecb8c96',1,'level.c']]],
+  ['drawretryscreen_168',['drawRetryScreen',['../level_8h.html#a89bd372dca209e10f542ab7592280b18',1,'level.c']]],
+  ['drawtopscores_169',['drawTopScores',['../menu_8h.html#aa83c634728c9f754adf18b7c7581739c',1,'menu.c']]]
+];
