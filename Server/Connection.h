@@ -20,13 +20,11 @@ public:
 
 	tcp::socket& getSocket();
 
-	Connection(boost::asio::io_context& ioContext);
-
 	void startHTTP(Connection::pointer thisCon);
 
 private:
+	Connection(boost::asio::io_context& ioContext);
 	void readDataHandler(int recievedBytes, Connection::pointer thisCon, const boost::system::error_code& error);
-
 	void sendDataHandler(const boost::system::error_code& error);
 	tcp::socket conSocket;
 

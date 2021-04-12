@@ -19,34 +19,38 @@ int main(void)
 	CURLcode res;
 	string input;
 
-	fopen_s(&output, "response.txt", "w");
+	
 
-	if (curl && output) {
+	if (curl) {
 		do
 		{
-			parseInput(input);
-			cout << "Starting cURL." << endl;
-			curl_easy_setopt(curl, CURLOPT_URL, input.c_str());
-			curl_easy_setopt(curl, CURLOPT_PORT, CURLPORT);
-			curl_easy_setopt(curl, CURLOPT_VERBOSE, VERBOSE);
-			curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
-			res = curl_easy_perform(curl);
-			if (res)
+			fopen_s(&output, "response.txt", "w");
+			if (output) {
+				parseInput(input);
+				cout << "Starting cURL." << endl;
+				curl_easy_setopt(curl, CURLOPT_URL, input.c_str());
+				curl_easy_setopt(curl, CURLOPT_PORT, CURLPORT);
+				curl_easy_setopt(curl, CURLOPT_VERBOSE, VERBOSE);
+				curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
+				res = curl_easy_perform(curl);
+				if (res)
+				{
+					cout << "Error ocurred when performing cURL." << endl;
+				}
+				fclose(output);
+			}
+			else
 			{
-				cout << "Error ocurred when performing cURL." << endl;
+				cout << "Error opening file." << endl;
 			}
 		} while (parseCont());
 	}
 	else
 	{
-		cout << "Couldn't init libcURL or open write file." << endl;
+		cout << "Couldn't init libcURL." << endl;
 	}
 
-	if (output)
-	{
-		fclose(output);
-	}
 	if (curl)
 	{
 		curl_easy_cleanup(curl);

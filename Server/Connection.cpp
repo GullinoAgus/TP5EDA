@@ -21,10 +21,12 @@ tcp::socket& Connection::getSocket()
 
 void Connection::startHTTP(Connection::pointer thisCon)
 {
-		boost::asio::async_read_until(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg), "\r\n\r\n",
+		/*boost::asio::async_read_until(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg), "\r\n\r\n",
 			boost::bind(&Connection::readDataHandler, this,
-				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error ));
-
+				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error ));*/
+		boost::asio::async_read(this->conSocket, boost::asio::dynamic_buffer(this->receivedMsg),
+			boost::bind(&Connection::readDataHandler, this,
+				boost::asio::placeholders::bytes_transferred, thisCon, boost::asio::placeholders::error));
 }
 
 
