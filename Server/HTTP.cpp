@@ -72,9 +72,7 @@ void HTTP:: elaborateMessage() {
 
             auxPositionINICIAL = toSendMsg.find("filenameLength", 0);
 
-            //busquemos alguna forma de calcular la cantidad de bytes que pesa el archivo
-
-            auxString = string("593");
+            auxString = to_string(auxString.size());
 
             toSendMsg.erase(auxPositionINICIAL, 13);
 
