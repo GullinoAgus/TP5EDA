@@ -72,7 +72,6 @@ void HTTP:: elaborateMessage() {
             error = 1;
         }
         boost::filesystem::path path(auxString);
-        cout << http::server::mime_types::extension_to_type(boost::filesystem::extension(path)) << endl;
 
         auxPositionINICIAL = toSendMsg.find(string("text / html"), 0);
         toSendMsg.replace(auxPositionINICIAL, string("text / html").length(), http::server::mime_types::extension_to_type(boost::filesystem::extension(path)));
