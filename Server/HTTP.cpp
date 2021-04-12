@@ -51,7 +51,7 @@ void HTTP:: elaborateMessage() {
 
     if (!error) {   //LECTURA DEL PATH
 
-        path = auxString;
+        this->path = auxString;
 
         if (!auxString.compare(string("/"))) {
 
@@ -98,7 +98,7 @@ void HTTP:: elaborateMessage() {
 
         toSendMsg.erase(auxPositionINICIAL, 13);
 
-        toSendMsg.replace(auxPositionINICIAL, 1, path);   //Escribo el path
+        toSendMsg.replace(auxPositionINICIAL, 1, this->path);   //Escribo el path
 
         file.close();
         
