@@ -64,7 +64,9 @@ void Connection::sendDataHandler(int sentBytes, Connection::pointer thisCon, con
 {
 	if (error)
 	{
+#ifdef DEBUG
 		std::cerr << "Error ocurred while writting: " << error.message() << std::endl;
+#endif // DEBUG
 	}
 
 	this->conSocket.close();

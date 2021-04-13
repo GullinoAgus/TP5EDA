@@ -9,8 +9,6 @@ SERVER CLASS
 
 #define PORTNUM 80
 
-
-
 class Server
 {
 public:
