@@ -1,6 +1,6 @@
 #include  "client.h"
 
-void clientconnection(string& input)
+CURLcode clientconnection(string& input)
 {
 	FILE* output = NULL;	//Crea el puntero al archivo para guardar la respuesta del server
 	CURL* curl = curl_easy_init();	//Inicializa la libreria curl y creo el handler
@@ -16,20 +16,18 @@ void clientconnection(string& input)
 			curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
 			res = curl_easy_perform(curl);	//Se hace el GET
-			if (res)	//Si devuelve un error avisa al usuario
-			{
-				cout << "Error ocurred when performing cURL." << endl;
-			}
 			fclose(output);	//Se cierra el archivo cargado
 		}
 		else	//Si no se pudo abrir el archivo avisa al usuario
 		{
-			cout << "Error opening file." << endl;
+			cout << endl << "Error opening file." << endl;
 		}
 		curl_easy_cleanup(curl);	//Libera el handler de curl
 	}
 	else	//Si no se pudo inicializar libcurl avisa al usuario
 	{
-		cout << "Couldn't init libcURL." << endl;
+		cout << endl << "Couldn't init libcURL." << endl;
 	}
+
+	return res;
 }

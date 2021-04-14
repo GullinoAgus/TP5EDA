@@ -1,43 +1,48 @@
 #include "client.h"
 
-//Carga en input el string ingresado por consola
-void parseInput(string& input);
-//Pregunta si se desea ingresar una nueva direccion,
-//devuelve 1 para continuar, 0 para terminar el programa
-int parseCont(void);
+//Se pide un string o pedido de salida
+int parseInput(string& input);
 
 int main(void)
 {
+	CURLcode curlResult;  //Guearda el resultado del acceso a la direccion
 	string input;	//Para guardar la direccion ingresada por consola
-	do
+	while(parseInput(input))		//Mientras no llegue el comando de salida del programa continuamos con el funcionamiento
 	{
-		parseInput(input);	//Carga el host/path/filename
-		clientconnection(input);	//Se conecta a la direccion ingresada
+		curlResult = clientconnection(input);	//Se conecta a la direccion ingresada
+		switch (curlResult)
+		{
+		case CURLE_OK: 
+			cout << endl << "All OK." << endl;
+			break;
+		case CURLE_URL_MALFORMAT:
+			cout << endl << "Error ocurred: URL bad formating." << endl;
+			break;
+		case CURLE_COULDNT_CONNECT:
+			cout << endl << "Error ocurred: Couldn't connect." << endl;
+			break;
+		case CURLE_COULDNT_RESOLVE_HOST:
+			cout << endl << "Error ocurred: Couldn't resolve host." << endl;
+			break;
+		default:
+			cout << endl << "Error ocurred: (General message) check host, availabitlity of server and URL." << endl;
+			break;
+		}
 	}
-	while (parseCont());	//Pregunta si se desea cargar una nueva direccion
+
 	return 0;
 }
 
-void parseInput(string& input)
+int parseInput(string& input)
 {
 	string instring;
-	cout << "Ingrese la direccion a la que se desesa conectar en la forma host/path/filename." << endl;
+	cout << endl << "Ingrese la direccion a la que se desesa conectar en la forma host/path/filename , o Q para salir." << endl;
 	cin >> instring;	//Se carga el string ingresado
-	input = instring;
-}
-
-int parseCont(void)	//Devuelve 0 si no se quiere continuar y 1 para continuar
-{
-	string contstring;
-	cout << "\n\nQuiere conectarse a una nueva direccion?" << endl;
-	cout << "Ingrese Y para ingresar una nueva direccion u otra cosa para salir del programa." << endl;
-	cin >> contstring;	//Se carga el string ingresado
-	if (!strcmp(contstring.c_str(), "Y"))	//Si es la tecla Y devuelve 1 para continuar, sino devuelve 0
-	{
-		return 1;
-	}
-	else
+	if (!instring.compare("Q") || !instring.compare("q"))		//Si es una q o Q salimos con 0, sino cargamos el mensaje en input
 	{
 		return 0;
 	}
+	input = instring;
+
+	return 1;
 }

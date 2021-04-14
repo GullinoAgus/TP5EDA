@@ -1,13 +1,7 @@
-/*
-
-SERVER CLASS
-
-*/
-
 #pragma once
 #include "Connection.h"
 
-#define PORTNUM 80
+#define PORTNUM 80    //Numero de puerto para escuchar
 
 class Server
 {
