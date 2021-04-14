@@ -26,7 +26,11 @@ namespace http {
               { ".jpg", "image/jpeg" },
               { ".png", "image/png" },
               { ".css", "text/css" },
-              { ".js", "text/js" }
+              { ".js", "text/js" },
+              { ".rar", "application/x-rar-compressed" },
+              { ".7z", "application/x-7z-compressed" },
+              { ".json", "application/json" },
+              { ".pdf", "application/pdf" }
             };
 
             std::string extension_to_type(const std::string& extension)
