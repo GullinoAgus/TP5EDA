@@ -20,9 +20,12 @@ public:
 
 	void startHTTP(Connection::pointer thisCon);				//Iniciador de comunicacion
 
+	~Connection();	
+
 private:
+
 	Connection(boost::asio::io_context& ioContext);			
-	~Connection();											
+								
 	/*Callback para las comunicaciones*/
 	void readDataHandler(int recievedBytes, Connection::pointer thisCon, const boost::system::error_code& error);
 	void sendDataHandler(int sentBytes, Connection::pointer thisCon, const boost::system::error_code& error);
